@@ -1,0 +1,10 @@
+with tabi as
+(Select Discipline as d1, Country as c1, row_number() over(partition by Discipline order by count(*) desc) as totCb
+  From hakan_karaagac.summer_medals
+  where year >= 1980
+  group by d1, c1
+  order by d1, totCb desc)
+Select F.d1 as Discipline, F.c1 as FirstMostMedals, S.c1 as ThirdMostMedals, T.c1 as FifthMostMedals
+From (select d1, c1 from tabi where totCb = 1) F join (select d1, c1 from tabi where totCb = 3) S on F.d1 = S.d1 join (select d1, c1 from tabi where totCb = 5) T on T.d1 = S.d1
+order by F.d1
+
